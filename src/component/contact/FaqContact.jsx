@@ -1,5 +1,7 @@
 import React, { useState } from 'react'
-import { Accordion, AccordionHeader, AccordionBody, } from "@material-tailwind/react";
+
+import pkg from '@material-tailwind/react';
+const {Accordion, AccordionHeader, AccordionBody} = pkg;
 
 const FaqContact = ({ data }) => {
 

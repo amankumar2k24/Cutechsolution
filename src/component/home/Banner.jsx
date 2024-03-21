@@ -1,6 +1,7 @@
 import React from 'react';
 import Slider from 'react-slick';
-import { Typography } from '@material-tailwind/react';
+import MaterialTailwind from '@material-tailwind/react';
+const { Typography } = MaterialTailwind;
 import { Link } from 'react-router-dom';
 
 const Banner = () => {

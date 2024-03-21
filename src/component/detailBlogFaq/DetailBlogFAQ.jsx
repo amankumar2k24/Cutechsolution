@@ -1,5 +1,7 @@
 import React, { useState } from 'react'
-import { Accordion, AccordionHeader, AccordionBody, } from "@material-tailwind/react";
+
+import pkg from '@material-tailwind/react';
+const {Accordion, AccordionHeader, AccordionBody} = pkg;
 
 const DetailBlogFAQ = () => {
     const [open, setOpen] = useState(null);

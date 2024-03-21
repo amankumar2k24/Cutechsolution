@@ -15,10 +15,7 @@ const GetInTouchContact = () => {
     })
 
     const moveToTop = () => {
-        return window.scrollTo({
-            top: 0,
-            behavior: 'smooth'
-        });
+        return true
     }
 
     const handleSubmitToSpreadSheet = (e) => {

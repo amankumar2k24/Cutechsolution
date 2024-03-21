@@ -1,74 +1,74 @@
-import fs from 'node:fs/promises'
-import express from 'express'
+/* eslint-disable no-undef */
+import fs from "fs";
+import path from "path";
+import express from "express";
+import { createServer as createViteServer } from "vite";
 
-// Constants
-const isProduction = process.env.NODE_ENV === 'production'
-const port = process.env.PORT || 5174
-const base = process.env.BASE || '/'
+const isProduction = process.env.NODE_ENV === "production";
+const Port = process.env.PORT || 3000;
+const Base = process.env.BASE || "/";
 
-// Cached production assets
 const templateHtml = isProduction
-  ? await fs.readFile('./dist/client/index.html', 'utf-8')
-  : ''
+    ? fs.readFileSync("./dist/client/index.html", "utf-8")
+    : "";
+
 const ssrManifest = isProduction
-  ? await fs.readFile('./dist/client/.vite/ssr-manifest.json', 'utf-8')
-  : undefined
+    ? await fs.readFile("./dist/client/ssr-manifest.json", "utf-8")
+    : undefined;
 
-// Create http server
-const app = express()
+const app = express();
+let vite;
 
-// Add Vite or respective production middlewares
-let vite
+// ? Add vite or respective production middlewares
 if (!isProduction) {
-  const { createServer } = await import('vite')
-  vite = await createServer({
-    server: { middlewareMode: true },
-    appType: 'custom',
-    base
-  })
-  app.use(vite.middlewares)
+    vite = await createViteServer({
+        server: { middlewareMode: true },
+        appType: "custom",
+    });
+
+    app.use(vite.middlewares);
 } else {
-  const compression = (await import('compression')).default
-  const sirv = (await import('sirv')).default
-  app.use(compression())
-  app.use(base, sirv('./dist/client', { extensions: [] }))
+    const sirv = (await import("sirv")).default;
+    const compression = (await import("compression")).default;
+    app.use(compression());
+    app.use(Base, sirv("./dist/client", {
+        extensions: [],
+        gzip: true,
+    }));
 }
 
-// Serve HTML
-app.use('*', async (req, res) => {
-  try {
-    const url = req.originalUrl.replace(base, '')
+app.use("*", async (req, res, next) => {
 
-    let template
-    let render
-    if (!isProduction) {
-      // Always read fresh template in development
-      template = await fs.readFile('./index.html', 'utf-8')
-      template = await vite.transformIndexHtml(url, template)
-      render = (await vite.ssrLoadModule('/src/entry-server.jsx')).render
-    } else {
-      template = templateHtml
-      render = (await import('./dist/server/entry-server.js')).render
+    // ! Favicon Fix
+    if (req.originalUrl === "/favicon.ico") {
+        return res.sendFile(path.resolve("./public/vite.svg"));
     }
-    console.log(url, ssrManifest, "shashank");
-
-    const rendered = await render(url, ssrManifest)
 
 
+    // ! SSR Render - Do not Edit if you don't know what heare whats going on
+    let template, render;
 
-    const html = template
-      .replace(`<!--app-head-->`, rendered.head ?? '')
-      .replace(`<!--app-html-->`, rendered.html ?? '')
+    try {
+        if (!isProduction) {
+            template = fs.readFileSync(path.resolve("./index.html"), "utf-8");
+            template = await vite.transformIndexHtml(req.originalUrl, template);
+            render = (await vite.ssrLoadModule("/src/entry-server.jsx")).render;
+        } else {
+            template = templateHtml;
+            render = (await import("./dist/server/entry-server.jsx")).render;
+        }
 
-    res.status(200).set({ 'Content-Type': 'text/html' }).send(html)
-  } catch (e) {
-    vite?.ssrFixStacktrace(e)
-    console.log(e.stack)
-    res.status(500).end(e.stack)
-  }
-})
+        const rendered = await render({ path: req.originalUrl }, ssrManifest);
+        const html = template.replace(`<!--app-html-->`, rendered ?? '');
 
-// Start http server
-app.listen(port, () => {
-  console.log(`Server started at http://localhost:${port}`)
-})
+        res.status(200).setHeader("Content-Type", "text/html").end(html);
+    } catch (error) {
+        vite.ssrFixStacktrace(error);
+        next(error);
+    }
+});
+
+// ? Start http server
+app.listen(Port, () => {
+    console.log(`Server running on http://localhost:${Port}`);
+});

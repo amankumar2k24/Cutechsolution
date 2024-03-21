@@ -12,11 +12,7 @@ const Navbar = () => {
         setMenuOpen(false);
     };
 
-    useEffect(() => {
-        if (window.scrollX > 720) {
-            setHide(false)
-        }
-    }, [window])
+
 
 
     useEffect(() => {
