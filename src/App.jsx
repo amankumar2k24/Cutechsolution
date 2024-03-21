@@ -3,30 +3,30 @@ import { useLocation } from 'react-router-dom';
 import Navbar from './component/Navbar';
 import PrivateRoutes from './routes/PrivateRoutes';
 import Footer from './component/Footer';
-import TawkMessengerReact from '@tawk.to/tawk-messenger-react';
-import { Helmet } from 'react-helmet-async';
+// import TawkMessengerReact from '@tawk.to/tawk-messenger-react';
+// import { Helmet } from 'react-helmet-async';
 
 const App = () => {
   const location = useLocation();
-  const tawkMessengerRef = useRef();
+  // const tawkMessengerRef = useRef();
   const currentPage = pageData.find(page => page.path === location.pathname);
 
   return (
     <>
-      <Helmet>
+      {/* <Helmet>
         <title>{currentPage.metaTitle}</title>
         <meta name="description" content={currentPage.metaDescription} />
         {currentPage.metaKeywords && <meta name="keywords" content={currentPage.metaKeywords} />}
         {currentPage.canonicalUrl && <link rel="canonical" href={currentPage.canonicalUrl} />}
-      </Helmet>
+      </Helmet> */}
 
       <Navbar />
       <PrivateRoutes />
-      <TawkMessengerReact
+      {/* <TawkMessengerReact
         ref={tawkMessengerRef}
         propertyId="65f5385ecc1376635adb4051"
         widgetId="1hp2u8db4" />
-      <Footer />
+      <Footer /> */}
     </>
   );
 };
