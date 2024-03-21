@@ -1,12 +1,10 @@
-import ReactDOMServer from 'react-dom/server';
-import { StaticRouter } from 'react-router-dom/server';
-import App from './App';
+import ReactDOMServer from "react-dom/server";
+import { StaticRouter } from "react-router-dom/server";
+import { Router } from "./routes/PrivateRoutes";
 
 const render = ({ path }) => {
     return ReactDOMServer.renderToString(
-        <StaticRouter location={path}>
-            <App />
-        </StaticRouter>
+        StaticRouter({ location: path }, Router())
     );
 };
 

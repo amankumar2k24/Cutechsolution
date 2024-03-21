@@ -1,6 +1,6 @@
 import { Routes, Route } from "react-router-dom";
 
-import  Home  from "../pages/Home";
+import  {Home}  from "../pages/Home";
 // import Other  from "../pages/Other";
 export const Router = () => {
     return (
@@ -10,3 +10,4 @@ export const Router = () => {
         </Routes>
     );
 };
+
