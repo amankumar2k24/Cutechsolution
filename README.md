@@ -1,3 +1,0 @@
-# Cutechsolution
-
-Hey
